@@ -13,7 +13,10 @@ repositories {
 }
 
 dependencies {
+    implementation("com.squareup:kotlinpoet:1.12.0")
+    implementation("org.antlr:antlr4-runtime:4.11.1")
     testImplementation(kotlin("test"))
+    testImplementation("org.assertj:assertj-core:3.23.1")
 }
 
 tasks.test {
