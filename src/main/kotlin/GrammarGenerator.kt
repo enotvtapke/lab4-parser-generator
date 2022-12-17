@@ -25,6 +25,6 @@ class GrammarGenerator(private val lexerRules: List<LexerRule>) {
     }
 
     private fun LexerRule.initializerCode(): String {
-        return """model.LexerRule("$id", "$pattern".toRegex(), $ignored)"""
+        return """LexerRule("$id", "$pattern".toRegex(), $ignored)"""
     }
 }

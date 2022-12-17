@@ -17,8 +17,8 @@ internal class GrammarGeneratorTest {
         val expected ="""
             public object Grammar {
               public val LEXER_RULES: kotlin.collections.List<model.LexerRule> = listOf(
-                model.LexerRule("TRUE", "True".toRegex(), false), 
-                model.LexerRule("INT", "[0-9]+".toRegex(), false), 
+                LexerRule("TRUE", "True".toRegex(), false), 
+                LexerRule("INT", "[0-9]+".toRegex(), false), 
               )
             }
             
