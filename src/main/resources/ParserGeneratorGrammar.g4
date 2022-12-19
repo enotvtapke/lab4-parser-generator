@@ -32,7 +32,7 @@ label: VAR_ID '=';
 
 terminal: label? TYPE_ID;
 
-tokens: token+;
+tokens: token*;
 
 myLexerRule
 : TYPE_ID ':' STRING SK ';'

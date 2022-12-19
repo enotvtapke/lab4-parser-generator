@@ -5,16 +5,17 @@ expr [acc=Int] returns [res=Int]
 ;
 
 expr_ [acc=Int] returns [res=Int]
-: PLUS t=term[acc] { val tmp = acc + t.res!! } e_=expr_[tmp] { expr_.res = e_.res }
+: PLUS t=term[acc] { val tmp = context.add(acc, t.res!!) } e_=expr_[tmp] { expr_.res = e_.res }
 | { expr_.res = acc }
 ;
 
 term [acc=Int] returns [res=Int]
 : number=NUMBER { term.res = number.text.toInt() }
-| LBRACKER e=expr[acc] RBRACKER { term.res = e.res }
+| LBRACKET e=expr[acc] RBRACKET { term.res = e.res }
 ;
 
 PLUS : '\\+';
 NUMBER : '[0-9]+';
-LBRACKER : '\\(';
-RBRACKER : '\\)';
+LBRACKET : '\\(';
+RBRACKET : '\\)';
+WS : '[ \t\r\n]+' -> skip;

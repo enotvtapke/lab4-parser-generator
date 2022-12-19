@@ -3,24 +3,30 @@ package generator.parser
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import generator.runtime.EPS
-import generator.runtime.Node
-import generator.runtime.ParserException
-import generator.runtime.Terminal
+import generator.runtime.*
+import kotlin.reflect.KClass
 
 class ParserGenerator(
     private val parserRules: List<ParserRule>,
     private val firstFollowCalculator: FirstFollowCalculator,
-    private val lexerPropertyName: String = "lexer"
+    private val lexerPropertyName: String = "lexer",
+    private val contextClass: KClass<*>? = null,
+    private val contextName: String? = null,
 ) {
-
     fun generate(lexerClassName: ClassName, nonTerminalsPackage: String): TypeSpec {
-        val lexerProperty = PropertySpec.builder(lexerPropertyName, lexerClassName)
-            .initializer("%T(input)", lexerClassName).addModifiers(PRIVATE).build()
         return TypeSpec.classBuilder("Parser")
             .addProperty(
-                lexerProperty
+                PropertySpec.builder(lexerPropertyName, lexerClassName)
+                    .initializer("%T(input)", lexerClassName).addModifiers(PRIVATE).build()
             )
+            .apply {
+                if (contextClass != null) {
+                    addProperty(
+                        PropertySpec.builder(contextName ?: "ctx", contextClass)
+                            .initializer("%T()", contextClass).build()
+                    )
+                }
+            }
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("input", String::class)

@@ -35,7 +35,7 @@ class ParserGeneratorGrammarVisitorImpl : ParserGeneratorGrammarBaseVisitor<Unit
 
                             token.nonterm() != null -> NonTermToken(
                                 token.nonterm().VAR_ID().text,
-                                token.nonterm().args().VAR_ID().map { it.text },
+                                token.nonterm().args()?.VAR_ID()?.map { it.text } ?: listOf(),
                                 token.nonterm()?.label()?.VAR_ID()?.text
                             )
 

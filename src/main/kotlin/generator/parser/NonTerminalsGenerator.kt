@@ -12,16 +12,21 @@ class NonTerminalsGenerator(private val parserRules: List<ParserRule>) {
 
     private fun nonTerminal(parserRule: ParserRule) =
         TypeSpec.classBuilder(parserRule.className)
-            .addModifiers(KModifier.DATA)
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameters(parserRule.returnValuesTypes
-                        .map {
-                            ParameterSpec.builder(it.label, it.typeClassName.copy(true)).defaultValue("null").build()
-                        }
+            .apply {
+                if (parserRule.returnValuesTypes.isNotEmpty()) {
+                    addModifiers(KModifier.DATA)
+                    primaryConstructor(
+                        FunSpec.constructorBuilder()
+                            .addParameters(parserRule.returnValuesTypes
+                                .map {
+                                    ParameterSpec.builder(it.label, it.typeClassName.copy(true)).defaultValue("null")
+                                        .build()
+                                }
+                            )
+                            .build()
                     )
-                    .build()
-            )
+                }
+            }
             .addProperties(
                 parserRule.returnValuesTypes
                     .map {
