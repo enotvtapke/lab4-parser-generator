@@ -1,41 +1,19 @@
-package parser
+package generator.parser
 
-import model.*
+import generator.runtime.END
+import generator.runtime.EPS
 
-fun main() {
-    val parserRules = listOf(
-        ParserRule(
-            "E", listOf(
-                listOf(NonTermToken("T"), NonTermToken("E_"))
-            )
-        ),
-        ParserRule(
-            "E_", listOf(
-                listOf(TermToken("PLUS"), NonTermToken("T"), NonTermToken("E_")),
-                listOf(TermToken("EPS"))
-            )
-        ),
-        ParserRule(
-            "T", listOf(
-                listOf(TermToken("NUMBER")),
-                listOf(TermToken("LBRACKET"), NonTermToken("E"), TermToken("RBRACKET"))
-            )
-        ),
-    )
-
-    val firstFollowCalculator = FirstFollowCalculator()
-    println(firstFollowCalculator.calculate(parserRules))
-}
-
-class FirstFollowCalculator {
+class FirstFollowCalculator(parserRules: List<ParserRule>, startNonTermId: String = parserRules.first().id) {
     private val first = mutableMapOf<String, MutableSet<String>>()
     private val follow = mutableMapOf<String, MutableSet<String>>()
 
-    fun calculate(parserRules: List<ParserRule>, startNonTermId: String = parserRules.first().id):
-            Pair<MutableMap<String, MutableSet<String>>, MutableMap<String, MutableSet<String>>> {
+    fun get(): Pair<MutableMap<String, MutableSet<String>>, MutableMap<String, MutableSet<String>>> {
+        return Pair(first, follow)
+    }
+
+    init {
         first(parserRules)
         follow(parserRules, startNonTermId)
-        return Pair(first, follow)
     }
 
     private fun first(parserRules: List<ParserRule>) {
@@ -68,7 +46,7 @@ class FirstFollowCalculator {
     }
 
     private fun follow(parserRules: List<ParserRule>, start: String) {
-        follow.computeIfAbsent(start) { mutableSetOf() }.add("END")
+        follow.computeIfAbsent(start) { mutableSetOf() }.add(END.id)
         do {
             var change = false
             for (rule in parserRules) {
@@ -94,5 +72,14 @@ class FirstFollowCalculator {
                 }
             }
         } while (change)
+    }
+
+    fun first1(ruleId: String, tokens: List<ParserRuleToken>): Set<String> {
+        val first = first(tokens)
+        return if (EPS.id in first) {
+            (first - EPS.id) + follow[ruleId]!!
+        } else {
+            first
+        }
     }
 }

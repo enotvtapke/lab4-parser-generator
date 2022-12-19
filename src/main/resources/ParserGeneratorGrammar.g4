@@ -1,7 +1,7 @@
-grammar ParserGrammar;
+grammar ParserGeneratorGrammar;
 
-gram
-: 'grammar' TYPE_ID ';' myParserRule*
+rules
+: 'grammar' TYPE_ID ';' (myParserRule | myLexerRule)*
 ;
 
 myParserRule
@@ -34,13 +34,15 @@ terminal: label? TYPE_ID;
 
 tokens: token+;
 
-//TYPE : [A-Za-z][A-Za-z_0-9]*;
+myLexerRule
+: TYPE_ID ':' STRING SK ';'
+| TYPE_ID ':' STRING ';'
+;
+
 TYPE_ID  : [A-Z][A-Za-z_0-9]* ;
 VAR_ID : [a-z][A-Za-z_0-9]* ;
-//STRING      : '\'' (~('\'') | '\\\'')* '\'';
 STRING : '\'' (~('\''|'\r'|'\n') | '\\\'')* '\'';
 INT : ('+'|'-'|)[0-9]+;
-
 SK : '->' WS* 'skip' ;
 CODE : '{' (~[{}]+ CODE?)* '}';
 WS : [ \t\r\n]+ -> skip ;
