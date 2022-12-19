@@ -26,13 +26,10 @@ private fun generateLexer(lexerRules: List<LexerRule>) {
     val grammar = GrammarGenerator(lexerRules).generate()
     FileSpec.builder("gen", "Grammar").addType(grammar)
         .build().writeTo(Path.of("src/main/kotlin"))
-    val terminals = TerminalsGenerator(lexerRules.map { it.id }).generate()
-    FileSpec.builder("gen", "Terminals").apply { terminals.forEach { addType(it) } }
-        .build().writeTo(Path.of("src/main/kotlin"))
-    val lexer = LexerGenerator(lexerRules).generate(
-        MemberName("gen.Grammar", "LEXER_RULES"),
-        "gen"
-    )
+//    val terminals = TerminalsGenerator(lexerRules.map { it.id }).generate()
+//    FileSpec.builder("gen", "Terminals").apply { terminals.forEach { addType(it) } }
+//        .build().writeTo(Path.of("src/main/kotlin"))
+    val lexer = LexerGenerator().generate(MemberName("gen.Grammar", "LEXER_RULES"))
     FileSpec.builder("gen", "Lexer").addType(lexer)
         .build().writeTo(Path.of("src/main/kotlin"))
 }

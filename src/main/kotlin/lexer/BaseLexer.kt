@@ -1,29 +1,38 @@
 package lexer
 
+import model.END
 import model.LexerRule
+import model.Terminal
 
-class BaseLexer constructor(private val input: CharSequence, private val rules: List<LexerRule>) {
-    var pos = 0
+open class BaseLexer constructor(private val input: CharSequence, private val rules: List<LexerRule>) {
+    private var curPos = 0
+
+    var curTerminal: Terminal = END
         private set
 
-    fun nextToken(): RawTerminal? {
-        if (pos >= input.length) return null
+    fun nextToken(): Terminal {
+        fun IntRange.length() = last - first + 1
+
+        if (curPos >= input.length) return END
         rules.forEach { rule ->
-            val match = rule.pattern.matchAt(input, pos) ?: return@forEach
-            pos += match.range.length()
+            val match = rule.pattern.matchAt(input, curPos) ?: return@forEach
+            curPos += match.range.length()
             return if (rule.ignored) {
                 nextToken()
             } else {
-                RawTerminal(rule.id, match.value)
+                Terminal(rule.id, match.value).apply {
+                    curTerminal = this
+                }
             }
         }
         throw LexerException(
-            "Unknown token starting from: `${input.subSequence(pos, minOf(pos + 10, input.length))}...`", pos
+            "Unknown token starting from `${input.subSequence(curPos, minOf(curPos + 10, input.length))}...`", curPos
         )
     }
 
-    private fun IntRange.length() = last - first + 1
-
+    fun expect(terminal: Terminal) {
+        if (curTerminal != terminal) {
+            throw LexerException("Invalid token. Expected `$terminal`, actual `$curTerminal`", curPos)
+        }
+    }
 }
-
-class RawTerminal(val id: String, val text: String)

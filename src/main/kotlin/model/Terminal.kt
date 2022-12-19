@@ -1,5 +1,6 @@
 package model
 
-open class Terminal(val text: String) {
-    override fun toString(): String = "${this::class.simpleName}($text)"
-}
+data class Terminal(val id: String, val text: String)
+
+val END = Terminal("END", "")
+val EPS = Terminal("EPS", "")
