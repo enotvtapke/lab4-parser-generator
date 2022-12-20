@@ -1,4 +1,5 @@
-import app.Context
+package app
+
 import generator.Generator
 import java.io.File
 import java.math.BigDecimal
