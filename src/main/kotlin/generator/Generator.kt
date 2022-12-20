@@ -3,6 +3,7 @@ package generator
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.asClassName
 import generator.lexer.LexerGenerator
 import generator.lexer.LexerGrammarGenerator
 import generator.parser.*
@@ -18,6 +19,7 @@ class Generator(
     private val grammarFile: Path,
     private val outputDir: Path,
     private val basePackage: String,
+    private val imports: List<KClass<*>> = listOf(),
     private val contextClass: KClass<*>? = null,
     private val contextName: String? = null,
 ) {
@@ -55,7 +57,9 @@ class Generator(
         val nonTerminals = nonTerminalsGenerator.generate()
         FileSpec.builder(basePackage, "NonTerminals")
             .apply { nonTerminals.forEach { addType(it) } }
+            .addImports()
             .build().writeTo(outputDir)
+        trimImports("NonTerminals")
 
         val firstFollowCalculator = FirstFollowCalculator(rules)
         val parser = ParserGenerator(
@@ -66,6 +70,24 @@ class Generator(
         )
         FileSpec.builder(basePackage, "Parser")
             .addType(parser)
+            .addImports()
             .build().writeTo(outputDir)
+        trimImports("Parser")
+    }
+
+    private fun FileSpec.Builder.addImports() = apply {
+        this@Generator.imports.forEach {
+            addImport(
+                it.asClassName().packageName,
+                it.asClassName().simpleName
+            )
+        }
+    }
+
+    private fun trimImports(fileName: String) {
+        val file = outputDir.resolve(basePackage.replace('.', '/')).resolve("$fileName.kt").toFile()
+        file.writeText(
+            file.readLines().filterNot { it.startsWith("import ") && !it.contains('.') }.joinToString("\n")
+        )
     }
 }

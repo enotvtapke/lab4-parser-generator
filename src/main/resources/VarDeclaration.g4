@@ -10,10 +10,10 @@ endline
 ;
 
 genericType
-: TYPE_ID genericParameteresList
+: TYPE_ID genericParametersList
 ;
 
-genericParameteresList
+genericParametersList
 : LANGLE genericParameters RANGLE
 |
 ;

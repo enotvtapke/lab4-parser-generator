@@ -22,7 +22,7 @@ data class Argument(val label: String, val type: String) {
                 if (type.contains('.')) {
                     type.substring(0, type.lastIndexOf('.'))
                 } else {
-                    "kotlin"
+                    ""
                 }
             return ClassName(`package`, type)
         }

@@ -1,6 +1,7 @@
-
+import app.Context
 import generator.Generator
 import java.io.File
+import java.math.BigDecimal
 import java.nio.file.Path
 
 fun main() {
@@ -13,20 +14,21 @@ fun main() {
 
 private fun generateVarDeclarationParser() {
     val parserGenerator = Generator(
-        Path.of("src/main/resources/VarDeclaration.g4"),
-        Path.of("src/main/kotlin"),
-        "varDeclaration",
+        grammarFile = Path.of("src/main/resources/VarDeclaration.g4"),
+        outputDir = Path.of("src/main/kotlin"),
+        basePackage = "varDeclaration",
     )
     parserGenerator.generate()
 }
 
 private fun generateExpressionParser() {
     val parserGenerator = Generator(
-        Path.of("src/main/resources/Expression.g4"),
-        Path.of("src/main/kotlin"),
-        "expressionParser",
-        Context::class,
-        "context"
+        grammarFile = Path.of("src/main/resources/Expression.g4"),
+        outputDir = Path.of("src/main/kotlin"),
+        basePackage = "expressionParser",
+        imports = listOf(BigDecimal::class),
+        contextClass = Context::class,
+        contextName = "context"
     )
     parserGenerator.generate()
 }
@@ -38,8 +40,8 @@ private fun parserVarDeclaration() {
 }
 
 private fun parseExpression() {
-    val parser = expressionParser.Parser("1 + 2 + 3+( 43 +2 )+100")
-    val res = parser.expr(0)
+    val parser = expressionParser.Parser("-1.6 + -2.5 + 3+( -43 +2 )+100")
+    val res = parser.expr(BigDecimal(0))
     println(res.label.res)
     File("./expression.dot").writeText(res.toString())
 }
