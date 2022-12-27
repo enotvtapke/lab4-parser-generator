@@ -7,7 +7,6 @@ import com.squareup.kotlinpoet.asClassName
 import generator.lexer.LexerGenerator
 import generator.lexer.LexerGrammarGenerator
 import generator.parser.*
-import generator.runtime.LexerRule
 import grammarParser.ParserGeneratorGrammarLexer
 import grammarParser.ParserGeneratorGrammarParser
 import org.antlr.v4.runtime.CharStreams
@@ -24,12 +23,12 @@ class Generator(
     private val contextName: String? = null,
 ) {
     fun generate() {
-        val (lexerRules, parserRules) = rules(grammarFile)
-        generateLexer(lexerRules)
-        generateParser(parserRules)
+        val grammar = parseGrammar(grammarFile)
+        generateLexer(grammar)
+        generateParser(grammar)
     }
 
-    private fun rules(grammar: Path): Pair<List<LexerRule>, List<ParserRule>> {
+    private fun parseGrammar(grammar: Path): Grammar {
         val input = CharStreams.fromPath(grammar)
         val lexer = ParserGeneratorGrammarLexer(input)
         val tokens = CommonTokenStream(lexer)
@@ -37,11 +36,11 @@ class Generator(
         val tree = parser.rules()
         val visitor = ParserGeneratorGrammarVisitorImpl()
         visitor.visit(tree)
-        return Pair(visitor.lexerRules, visitor.parserRules)
+        return visitor.getGrammar()
     }
 
-    private fun generateLexer(lexerRules: List<LexerRule>) {
-        val lexerGrammar = LexerGrammarGenerator(lexerRules).generate()
+    private fun generateLexer(grammar: Grammar) {
+        val lexerGrammar = LexerGrammarGenerator(grammar.lexerRules).generate()
         FileSpec.builder(basePackage, "LexerGrammar").addType(lexerGrammar)
             .build().writeTo(outputDir)
 
@@ -52,8 +51,8 @@ class Generator(
             .build().writeTo(outputDir)
     }
 
-    private fun generateParser(rules: List<ParserRule>) {
-        val nonTerminalsGenerator = NonTerminalsGenerator(rules)
+    private fun generateParser(grammar: Grammar) {
+        val nonTerminalsGenerator = NonTerminalsGenerator(grammar.parserRules)
         val nonTerminals = nonTerminalsGenerator.generate()
         FileSpec.builder(basePackage, "NonTerminals")
             .apply { nonTerminals.forEach { addType(it) } }
@@ -61,9 +60,9 @@ class Generator(
             .build().writeTo(outputDir)
         trimImports("NonTerminals")
 
-        val firstFollowCalculator = FirstFollowCalculator(rules)
+        val firstFollowCalculator = FirstFollowCalculator(grammar.parserRules)
         val parser = ParserGenerator(
-            rules, firstFollowCalculator, "lexer", contextClass, contextName
+            grammar.parserRules, firstFollowCalculator, "lexer", contextClass, contextName
         ).generate(
             ClassName(basePackage, "Lexer"),
             basePackage
@@ -73,6 +72,24 @@ class Generator(
             .addImports()
             .build().writeTo(outputDir)
         trimImports("Parser")
+        grammar.parserPrefix?.let {
+            addParserPrefix(it)
+        }
+    }
+
+    private fun addParserPrefix(prefix: String) {
+        val file = outputDir.resolve(basePackage.replace('.', '/')).resolve("Parser.kt").toFile()
+        val imports = file.readLines().takeWhile {
+            it.startsWith("package") || it.startsWith("import ") || it.isBlank()
+        }
+        val body = file.readLines().drop(imports.size)
+        file.writeText(
+            buildString {
+                append(imports.joinToString("\n"))
+                append("\n$prefix\n\n")
+                append(body.joinToString("\n"))
+            }
+        )
     }
 
     private fun FileSpec.Builder.addImports() = apply {

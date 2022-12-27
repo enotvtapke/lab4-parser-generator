@@ -1,5 +1,9 @@
 grammar VarDeclaration;
 
+@prefix {
+    data class Example(val `data`: String)
+}
+
 varDeclaration
 : VAR VAR_ID COLON genericType endline
 ;

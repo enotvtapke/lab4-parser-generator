@@ -29,6 +29,18 @@ public class ParserGeneratorGrammarBaseListener implements ParserGeneratorGramma
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPrefix(ParserGeneratorGrammarParser.PrefixContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrefix(ParserGeneratorGrammarParser.PrefixContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMyParserRule(ParserGeneratorGrammarParser.MyParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}

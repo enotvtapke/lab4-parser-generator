@@ -18,6 +18,16 @@ public interface ParserGeneratorGrammarListener extends ParseTreeListener {
 	 */
 	void exitRules(ParserGeneratorGrammarParser.RulesContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ParserGeneratorGrammarParser#prefix}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrefix(ParserGeneratorGrammarParser.PrefixContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserGeneratorGrammarParser#prefix}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrefix(ParserGeneratorGrammarParser.PrefixContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ParserGeneratorGrammarParser#myParserRule}.
 	 * @param ctx the parse tree
 	 */

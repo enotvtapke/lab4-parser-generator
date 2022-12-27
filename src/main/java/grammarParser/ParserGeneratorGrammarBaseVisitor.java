@@ -25,6 +25,13 @@ public class ParserGeneratorGrammarBaseVisitor<T> extends AbstractParseTreeVisit
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitPrefix(ParserGeneratorGrammarParser.PrefixContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitMyParserRule(ParserGeneratorGrammarParser.MyParserRuleContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

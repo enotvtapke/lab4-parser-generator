@@ -17,6 +17,12 @@ public interface ParserGeneratorGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRules(ParserGeneratorGrammarParser.RulesContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ParserGeneratorGrammarParser#prefix}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrefix(ParserGeneratorGrammarParser.PrefixContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ParserGeneratorGrammarParser#myParserRule}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

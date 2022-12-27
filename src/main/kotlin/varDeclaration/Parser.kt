@@ -5,6 +5,8 @@ import generator.runtime.ParserException
 import generator.runtime.Terminal
 import kotlin.String
 
+data class Example(val `data`: String)
+
 public class Parser(
   input: String,
 ) {

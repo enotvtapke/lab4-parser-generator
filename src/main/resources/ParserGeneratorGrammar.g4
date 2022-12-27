@@ -1,7 +1,11 @@
 grammar ParserGeneratorGrammar;
 
 rules
-: 'grammar' TYPE_ID ';' (myParserRule | myLexerRule)*
+: 'grammar' TYPE_ID ';' prefix? (myParserRule | myLexerRule)*
+;
+
+prefix
+: '@prefix' CODE
 ;
 
 myParserRule
