@@ -1,21 +1,57 @@
 grammar Expression;
 
-expr [acc=BigDecimal] returns [res=BigDecimal]
+bin_expr [acc=Int] returns [res=Int]
+: t=bin_term[acc] { val tVal = t.res!! } b=bin_expr_[tVal] { bin_expr.res = b.res }
+;
+
+bin_expr_ [acc=Int] returns [res=Int]
+: BIT_OR e=bin_term[acc] { val tmp = acc or e.res!! } b_=bin_expr_[tmp] { bin_expr_.res = b_.res }
+| { bin_expr_.res = acc }
+;
+
+bin_term [acc=Int] returns [res=Int]
+: e=expr[acc] { val eVal = e.res!! } b=bin_term_[eVal] { bin_term.res = b.res }
+;
+
+bin_term_ [acc=Int] returns [res=Int]
+: BIT_AND e=expr[acc] { val tmp = acc and e.res!! } b_=bin_term_[tmp] { bin_term_.res = b_.res }
+| { bin_term_.res = acc }
+;
+
+expr [acc=Int] returns [res=Int]
 : t=term[acc] { val tVal = t.res!! } e=expr_[tVal] { expr.res = e.res }
 ;
 
-expr_ [acc=BigDecimal] returns [res=BigDecimal]
-: PLUS t=term[acc] { val tmp = context.add(acc, t.res!!) } e_=expr_[tmp] { expr_.res = e_.res }
+expr_ [acc=Int] returns [res=Int]
+: PLUS t=term[acc] { val tmp = acc + t.res!! } e_=expr_[tmp] { expr_.res = e_.res }
+| MINUS t=term[acc] { val tmp = acc - t.res!! } e_=expr_[tmp] { expr_.res = e_.res }
 | { expr_.res = acc }
 ;
 
-term [acc=BigDecimal] returns [res=BigDecimal]
-: number=NUMBER { term.res = number.text.toBigDecimal() }
-| LBRACKET e=expr[acc] RBRACKET { term.res = e.res }
+term [acc=Int] returns [res=Int]
+: n=num[acc] { val nVal = n.res!! } t_=term_[nVal] { term.res = t_.res }
+;
+
+term_ [acc=Int] returns [res=Int]
+: MULT n=num[acc] { val tmp = acc * n.res!! } t_=term_[tmp] { term_.res = t_.res }
+| DIV n=num[acc] { val tmp = acc / n.res!! } t_=term_[tmp] { term_.res = t_.res }
+| { term_.res = acc }
+;
+
+num [acc=Int] returns [res=Int]
+: number=NUMBER { num.res = number.text.toInt() }
+| LBRACKET e=bin_expr[acc] RBRACKET { num.res = e.res }
+| BIT_INV LBRACKET e=bin_expr[acc] RBRACKET { num.res = e.res!!.inv() }
 ;
 
 PLUS : '\\+';
-NUMBER : '(\\+|-|)[0-9]+(.[0-9]+)?';
+BIT_AND : '&';
+BIT_OR : '\\|';
+BIT_INV : '~';
+MINUS : '-';
+MULT : '\\*';
+DIV : '/';
+NUMBER : '[0-9]+';
 LBRACKET : '\\(';
 RBRACKET : '\\)';
 WS : '[ \t\r\n]+' -> skip;

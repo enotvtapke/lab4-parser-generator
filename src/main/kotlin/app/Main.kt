@@ -41,8 +41,8 @@ private fun parserVarDeclaration() {
 }
 
 private fun parseExpression() {
-    val parser = expressionParser.Parser("-1.6 + -2.5 + 3+( -43 +2 )+100")
-    val res = parser.expr(BigDecimal(0))
+    val parser = expressionParser.Parser("~ (2 | 2 * 4 + 31 - 5 / 2 * 4)")
+    val res = parser.bin_expr(0)
     println(res.label.res)
     File("./expression.dot").writeText(res.toString())
 }
