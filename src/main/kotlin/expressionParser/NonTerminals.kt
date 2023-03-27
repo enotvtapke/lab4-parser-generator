@@ -35,6 +35,14 @@ public data class Term_(
   public var res: Int? = null,
 ) : NonTerminal()
 
+public data class Log_term(
+  public var res: Int? = null,
+) : NonTerminal()
+
+public data class Log_term_(
+  public var res: Int? = null,
+) : NonTerminal()
+
 public data class Num(
   public var res: Int? = null,
 ) : NonTerminal()

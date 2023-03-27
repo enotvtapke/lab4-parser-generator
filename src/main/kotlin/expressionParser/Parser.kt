@@ -7,6 +7,9 @@ import generator.runtime.Terminal
 import java.math.BigDecimal
 import kotlin.String
 
+import kotlin.math.log
+    import kotlin.math.roundToInt
+
 public class Parser(
   input: String,
 ) {
@@ -146,7 +149,7 @@ public class Parser(
     val res = Node(term)
     when (lexer.curTerminal.id) {
       in listOf("NUMBER", "LBRACKET", "BIT_INV") -> {
-        val n = num(acc).also { res.addChild(it) }.label
+        val n = log_term(acc).also { res.addChild(it) }.label
         val nVal = n.res!!
         val t_ = term_(nVal).also { res.addChild(it) }.label
         term.res = t_.res
@@ -165,7 +168,7 @@ public class Parser(
         res.addChild(lexer.curTerminal)
         lexer.nextToken()
 
-        val n = num(acc).also { res.addChild(it) }.label
+        val n = log_term(acc).also { res.addChild(it) }.label
         val tmp = acc * n.res!!
         val t_ = term_(tmp).also { res.addChild(it) }.label
         term_.res = t_.res
@@ -175,7 +178,7 @@ public class Parser(
         res.addChild(lexer.curTerminal)
         lexer.nextToken()
 
-        val n = num(acc).also { res.addChild(it) }.label
+        val n = log_term(acc).also { res.addChild(it) }.label
         val tmp = acc / n.res!!
         val t_ = term_(tmp).also { res.addChild(it) }.label
         term_.res = t_.res
@@ -183,6 +186,44 @@ public class Parser(
       in listOf("PLUS", "MINUS", "BIT_AND", "BIT_OR", "END", "RBRACKET") -> {
         res.addChild(Terminal("EPS", ""))
         term_.res = acc
+      }
+      else -> throw ParserException("Invalid terminal ${lexer.curTerminal}", lexer.curPos)
+    }
+    return res
+  }
+
+  public fun log_term(acc: Int): Node<Log_term> {
+    val log_term = Log_term()
+    val res = Node(log_term)
+    when (lexer.curTerminal.id) {
+      in listOf("NUMBER", "LBRACKET", "BIT_INV") -> {
+        val n = num(acc).also { res.addChild(it) }.label
+        val nVal = n.res!!
+        val t_ = log_term_(nVal).also { res.addChild(it) }.label
+        log_term.res = t_.res
+      }
+      else -> throw ParserException("Invalid terminal ${lexer.curTerminal}", lexer.curPos)
+    }
+    return res
+  }
+
+  public fun log_term_(acc: Int): Node<Log_term_> {
+    val log_term_ = Log_term_()
+    val res = Node(log_term_)
+    when (lexer.curTerminal.id) {
+      in listOf("LOG") -> {
+        lexer.expect("LOG")
+        res.addChild(lexer.curTerminal)
+        lexer.nextToken()
+
+        val n = num(acc).also { res.addChild(it) }.label
+        val nVal = n.res!!
+        val t_ = log_term_(nVal).also { res.addChild(it) }.label
+        log_term_.res = log(acc.toDouble(), t_.res!!.toDouble()).roundToInt()
+      }
+      in listOf("MULT", "DIV", "PLUS", "MINUS", "BIT_AND", "BIT_OR", "END", "RBRACKET") -> {
+        res.addChild(Terminal("EPS", ""))
+        log_term_.res = acc
       }
       else -> throw ParserException("Invalid terminal ${lexer.curTerminal}", lexer.curPos)
     }

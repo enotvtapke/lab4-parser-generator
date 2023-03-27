@@ -6,8 +6,8 @@ import java.math.BigDecimal
 import java.nio.file.Path
 
 fun main() {
-    generateVarDeclarationParser()
-    parserVarDeclaration()
+//    generateVarDeclarationParser()
+//    parserVarDeclaration()
 
     generateExpressionParser()
     parseExpression()
@@ -41,7 +41,8 @@ private fun parserVarDeclaration() {
 }
 
 private fun parseExpression() {
-    val parser = expressionParser.Parser("~ (2 | 2 * 4 + 31 - 5 / 2 * 4)")
+    val input = "99 / 8 // (2 * 2) // 2 + (9 // 3 - 21 / 3)"
+    val parser = expressionParser.Parser(input)
     val res = parser.bin_expr(0)
     println(res.label.res)
     File("./expression.dot").writeText(res.toString())

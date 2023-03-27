@@ -11,6 +11,7 @@ public object LexerGrammar {
     LexerRule("BIT_INV", "~".toRegex(), false), 
     LexerRule("MINUS", "-".toRegex(), false), 
     LexerRule("MULT", "\\*".toRegex(), false), 
+    LexerRule("LOG", "//".toRegex(), false), 
     LexerRule("DIV", "/".toRegex(), false), 
     LexerRule("NUMBER", "[0-9]+".toRegex(), false), 
     LexerRule("LBRACKET", "\\(".toRegex(), false), 

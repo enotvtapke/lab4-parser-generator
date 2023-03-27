@@ -1,5 +1,10 @@
 grammar Expression;
 
+@prefix {
+    import kotlin.math.log
+    import kotlin.math.roundToInt
+}
+
 bin_expr [acc=Int] returns [res=Int]
 : t=bin_term[acc] { val tVal = t.res!! } b=bin_expr_[tVal] { bin_expr.res = b.res }
 ;
@@ -29,13 +34,22 @@ expr_ [acc=Int] returns [res=Int]
 ;
 
 term [acc=Int] returns [res=Int]
-: n=num[acc] { val nVal = n.res!! } t_=term_[nVal] { term.res = t_.res }
+: n=log_term[acc] { val nVal = n.res!! } t_=term_[nVal] { term.res = t_.res }
 ;
 
 term_ [acc=Int] returns [res=Int]
-: MULT n=num[acc] { val tmp = acc * n.res!! } t_=term_[tmp] { term_.res = t_.res }
-| DIV n=num[acc] { val tmp = acc / n.res!! } t_=term_[tmp] { term_.res = t_.res }
+: MULT n=log_term[acc] { val tmp = acc * n.res!! } t_=term_[tmp] { term_.res = t_.res }
+| DIV n=log_term[acc] { val tmp = acc / n.res!! } t_=term_[tmp] { term_.res = t_.res }
 | { term_.res = acc }
+;
+
+log_term [acc=Int] returns [res=Int]
+: n=num[acc] { val nVal = n.res!! } t_=log_term_[nVal] { log_term.res = t_.res }
+;
+
+log_term_ [acc=Int] returns [res=Int]
+: LOG n=num[acc] { val nVal = n.res!! } t_=log_term_[nVal] { log_term_.res = log(acc.toDouble(), t_.res!!.toDouble()).roundToInt() }
+| { log_term_.res = acc }
 ;
 
 num [acc=Int] returns [res=Int]
@@ -50,6 +64,7 @@ BIT_OR : '\\|';
 BIT_INV : '~';
 MINUS : '-';
 MULT : '\\*';
+LOG : '//';
 DIV : '/';
 NUMBER : '[0-9]+';
 LBRACKET : '\\(';
