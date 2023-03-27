@@ -14,6 +14,23 @@ class FirstFollowCalculator(parserRules: List<ParserRule>, startNonTermId: Strin
     init {
         first(parserRules)
         follow(parserRules, startNonTermId)
+        if (!isLL1(parserRules)) {
+            throw IllegalArgumentException("Grammar is not LL1: first = $first, follow = $follow")
+        }
+    }
+
+    private fun isLL1(parserRules: List<ParserRule>): Boolean {
+        for (rule in parserRules) {
+            for (alt1 in rule.alternatives) {
+                for (alt2 in rule.alternatives) {
+                    if (alt1 == alt2) continue
+                    if ((first1(rule.id, alt1) intersect first1(rule.id, alt2)).isNotEmpty()) {
+                        return false
+                    }
+                }
+            }
+        }
+        return true
     }
 
     private fun first(parserRules: List<ParserRule>) {
