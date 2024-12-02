@@ -1,17 +1,16 @@
-## Генератор парсеров
-Код генерирует нисходящие рекурсивные парсеры на kotlin для LL1 грамматик.
-* Поддерживаются наследуемые и синтезируемые атрибуты.
-* При генерации парсера производится проверка принадлежности описанной грамматики к LL1.
-* В парсер можно передать класс с контекстом.
-* В процессе парсинга строится дерево разбора, представимое в формате graphviz.
-* Возможность добавить в сгенерированный парсер пользовательские импорты.
-* Возможность задания пакета, которому будут принадлежать классы сгенерированного парсера.
+## Parser generator
+The code generates top-down recursive parsers in kotlin for LL(1) grammars. The generated code looks nice and is easy to modify.
+* Inherited and synthesized attributes are supported.
+* Generator checks if the described grammar belongs to LL(1).
+* A class with a context can be passed to the parser.
+* During the parsing process, a parse tree is built and represented in graphviz format.
+* Ability to add custom imports to the generated parser.
+* Possibility to specify a package to which classes of the generated parser will belong.
 
-Грамматика, в соответствии с которой генерируются парсеры описывается в формате схожим с тем, который использует AntLr.
+The grammar according to which parsers are generated is described in a format similar to the one used by ANTLR.
 
-Грамматика описания грамматики для генерации парсера содержится в файле ParserGeneratorGrammar.g4. 
-В папке java находится парсер для этой грамматики, сгенерированный с помощью AntLR.
-Пакет app содержит файлы, демонстрирующие пример использования генератора парсеров. 
-В качестве примера генерируются парсеры для грамматик, описанных в файлах VarDeclaration.g4 и Expression.g4.
-Сгенерированные парсеры для этих грамматиках находятся в пакетах varDeclaration и expressionParser 
-соответственно.
+The grammar for describing grammars based on which parsers are generated is contained in the file [ParserGeneratorGrammar.g4](src/main/resources/ParserGeneratorGrammar.g4). 
+The java folder contains the parser for this grammar generated using ANTLR.
+The app package contains files that demonstrate an example of how to use the parser generator. 
+As an example, parsers are generated for the grammars described in the VarDeclaration.g4 and Expression.g4 files.
+The generated parsers for these grammars are in the packages varDeclaration and expressionParser respectively.
