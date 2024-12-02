@@ -10,7 +10,7 @@ The code generates top-down recursive parsers in kotlin for LL(1) grammars. The 
 The grammar according to which parsers are generated is described in a format similar to the one used by ANTLR.
 
 The grammar for describing grammars based on which parsers are generated is contained in the file [ParserGeneratorGrammar.g4](src/main/resources/ParserGeneratorGrammar.g4). 
-The java folder contains the parser for this grammar generated using ANTLR.
-The app package contains files that demonstrate an example of how to use the parser generator. 
-As an example, parsers are generated for the grammars described in the VarDeclaration.g4 and Expression.g4 files.
-The generated parsers for these grammars are in the packages varDeclaration and expressionParser respectively.
+The [java](src/main/java) folder contains the parser for this grammar generated using ANTLR.
+The [app](src/main/kotlin/app) package contains files that demonstrate an example of how to use the parser generator. 
+As an example, parsers are generated for the grammars described in the [VarDeclaration.g4](src/main/resources/VarDeclaration.g4) and [Expression.g4](src/main/resources/Expression.g4) files.
+The generated parsers for these grammars are in the packages [varDeclaration](src/main/kotlin/varDeclaration) and [expressionParser](src/main/kotlin/expressionParser) respectively.
