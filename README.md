@@ -1,5 +1,5 @@
 ## Parser generator
-The program generates Kotlin source code of top-down recursive parsers for LL(1) grammars. The generated code looks nice and is easy to modify. The generator itself is written entirely in Kotlin.
+The program generates Kotlin source code for top-down recursive parsers based on LL(1) grammar described in a separated file. The generated code looks nice and is easy to modify. The generator itself is written entirely in Kotlin.
 * Inherited and synthesized attributes are supported.
 * Generator checks if the described grammar belongs to LL(1).
 * A class with a context can be passed to the parser.
